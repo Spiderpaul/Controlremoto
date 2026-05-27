@@ -1,7 +1,7 @@
 {
-  "name": "PQM Remote Control",
-  "short_name": "PQM Control",
-  "start_url": "control.html",
+  "name": "Remote Control",
+  "short_name": "Control",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#121212",
   "theme_color": "#00adb5",
