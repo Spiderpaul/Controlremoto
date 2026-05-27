@@ -1,0 +1,17 @@
+{
+  "name": "PQM Remote Control",
+  "short_name": "PQM Control",
+  "start_url": "control.html",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#00adb5",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/686/686589.png",
+      "sizes": "512512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

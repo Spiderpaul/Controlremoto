@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Control</title>
+    <style>
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; background: #121212; margin: 0; }
+        .btn-play { width: 200px; height: 200px; border-radius: 50%; background: #00adb5; color: white; border: none; font-size: 24px; font-weight: bold; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .btn-play:active { background: #393e46; transform: scale(0.95); }
+    </style>
+</head>
+<body ontouchstart="">
+
+    <button class="btn-play" id="botonPausa">PLAY / PAUSE</button>
+
+    <script>
+        const BOTON = document.getElementById('botonPausa');
+        // CAMBIA ESTO por la IP real de tu PC, mantén el :5005/pausa
+        const URL_SERVIDOR = 'http://192.168.100.14:5005/pausa'; 
+
+        function enviarSeñal(e) {
+            e.preventDefault(); // Evita zooms y retrasos del navegador móvil
+            
+            console.log("Enviando señal...");
+            
+            // El truco definitivo: usar 'no-cors' para evitar que el navegador 
+            // bloquee la petición si la PC no responde rápido.
+            fetch(URL_SERVIDOR, { mode: 'no-cors' })
+                .then(() => console.log("¡Señal enviada con éxito!"))
+                .catch(err => console.error("Error de conexión:", err));
+        }
+
+        // Escucha tanto en celular (touchstart) como en PC (click) para pruebas
+        BOTON.addEventListener('touchstart', enviarSeñal);
+        BOTON.addEventListener('click', enviarSeñal);
+    </script>
+</body>
+</html>
