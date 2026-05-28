@@ -1,0 +1,56 @@
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #121212;
+    margin: 0;
+    
+    /* BLOQUEOS VITALES PARA JUEGOS MÓVILES */
+    user-select: none;           /* Evita que se seleccione texto al presionar rápido */
+    -webkit-user-select: none;
+    touch-action: manipulation;  /* Elimina el molesto retraso de 300ms que los móviles meten para el doble tap */
+}
+
+/* Contenedor de la Cruceta usando un Grid de 3x3 */
+.dpad-container {
+    display: grid;
+    grid-template-columns: repeat(3, 80px);
+    grid-template-rows: repeat(3, 80px);
+    gap: 5px;
+    margin-bottom: 40px; /* Separación con el botón de saltar */
+}
+
+/* Estilo general para los botones de dirección */
+.dbtn {
+    background: #393e46;
+    border: none;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    border-radius: 10px;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+}
+.dbtn:active { background: #00adb5; } /* Se ilumina en azul al tocarlo */
+
+/* Posicionamiento en la rejilla 3x3 */
+.btn-up    { grid-column: 2; grid-row: 1; }
+.btn-left  { grid-column: 1; grid-row: 2; }
+.btn-right { grid-column: 3; grid-row: 2; }
+.btn-down  { grid-column: 2; grid-row: 3; }
+
+/* El botón redondo de saltar que ya tenías */
+.btn-play { 
+    width: 120px; 
+    height: 120px; 
+    border-radius: 50%; 
+    background: #00adb5; 
+    color: white; 
+    border: none; 
+    font-size: 18px; 
+    font-weight: bold; 
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3); 
+}
+.btn-play:active { background: #222831; transform: scale(0.95); }

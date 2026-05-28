@@ -8,15 +8,19 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#00adb5">
 
-    <style>
-        body { display: flex; justify-content: center; align-items: center; height: 100vh; background: #121212; margin: 0; }
-        .btn-play { width: 200px; height: 200px; border-radius: 50%; background: #00adb5; color: white; border: none; font-size: 24px; font-weight: bold; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .btn-play:active { background: #393e46; transform: scale(0.95); }
-    </style>
+    <link rel="stylesheet" href="style.css">
+
 </head>
 <body ontouchstart="">
 
-    <button class="btn-play" id="botonPausa">PLAY / PAUSE</button>
+    <div class="dpad-container">
+        <button class="dbtn btn-up" id="btnArriba">▲</button>
+        <button class="dbtn btn-left" id="btnIzquierda">◀</button>
+        <button class="dbtn btn-right" id="btnDerecha">▶</button>
+        <button class="dbtn btn-down" id="btnAbajo">▼</button>
+    </div>
+
+    <button class="btn-play" id="botonPausa">SALTAR</button>
 
     <script>
         // ==========================================
@@ -41,27 +45,46 @@
         socket.onclose = () => console.log("Conexión WebSocket cerrada.");
 
         // ==========================================
-        // 3. LÓGICA DEL BOTÓN (Actualizada)
+        // Mapeamos los botones de la pantalla
         // ==========================================
-        const BOTON = document.getElementById('botonPausa');
+        const botones = {
+            'btnArriba': 'UP',
+            'btnAbajo': 'DOWN',
+            'btnIzquierda': 'LEFT',
+            'btnDerecha': 'RIGHT',
+            'botonPausa': 'SPACE' // Tu botón redondo
+        };
 
-        function enviarSeñal(e) {
-            e.preventDefault(); // Evita zooms y retrasos del navegador móvil
-            
-            // Verificamos que el túnel de WebSocket esté abierto antes de mandar datos
+        // Función mágica para registrar los eventos de presionar y soltar
+        Object.keys(botones).forEach(id => {
+            const el = document.getElementById(id);
+            const comando = botones[id];
+
+            if (el) {
+                // Al tocar la pantalla (Presionar botón)
+                el.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    enviarComando(`${comando}_DOWN`);
+                });
+
+                // Al levantar el dedo (Soltar botón)
+                el.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    enviarComando(`${comando}_UP`);
+                });
+
+                // Soporte para pruebas en PC con el mouse (opcional)
+                el.addEventListener('mousedown', () => enviarComando(`${comando}_DOWN`));
+                el.addEventListener('mouseup', () => enviarComando(`${comando}_UP`));
+            }
+        });
+
+        function enviarComando(mensaje) {
             if (socket.readyState === WebSocket.OPEN) {
-                console.log("Enviando ráfaga por WebSocket...");
-                
-                // Enviamos el comando exacto que espera tu servidor de Python: "A_PRESS"
-                socket.send("A_PRESS"); 
-            } else {
-                console.warn("No se pudo enviar, el WebSocket no está listo o está cerrado.");
+                console.log("Enviando:", mensaje);
+                socket.send(mensaje);
             }
         }
-
-        // Eventos para disparar la función
-        BOTON.addEventListener('touchstart', enviarSeñal);
-        BOTON.addEventListener('click', enviarSeñal);
     </script>
 </body>
 </html>
