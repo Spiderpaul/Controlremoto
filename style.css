@@ -1,26 +1,27 @@
 
-body {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: #121212;
-    margin: 0;
+bbody { 
+    display: flex; 
+    flex-direction: row;        /* Pone la cruceta y el botón lado a lado */
+    justify-content: space-around; /* Deja un espacio cómodo en el centro para la pantalla */
+    align-items: center; 
+    height: 100vh; 
+    background: #121212; 
+    margin: 0; 
+    padding: 0 40px;            /* Margen en las esquinas para que no quede pegado al borde del cel */
+    overflow: hidden;           /* Evita barras de desplazamiento raras */
     
-    /* BLOQUEOS VITALES PARA JUEGOS MÓVILES */
-    user-select: none;           /* Evita que se seleccione texto al presionar rápido */
+    /* Bloqueos vitales para que no se arruine la experiencia al presionar rápido */
+    user-select: none; 
     -webkit-user-select: none;
-    touch-action: manipulation;  /* Elimina el molesto retraso de 300ms que los móviles meten para el doble tap */
+    touch-action: manipulation; 
 }
 
-/* Contenedor de la Cruceta usando un Grid de 3x3 */
+/* Contenedor de la Cruceta (Se mantiene en Grid 3x3, pero un poco más compacto para horizontal) */
 .dpad-container {
     display: grid;
-    grid-template-columns: repeat(3, 80px);
-    grid-template-rows: repeat(3, 80px);
-    gap: 5px;
-    margin-bottom: 40px; /* Separación con el botón de saltar */
+    grid-template-columns: repeat(3, 70px);
+    grid-template-rows: repeat(3, 70px);
+    gap: 4px;
 }
 
 /* Estilo general para los botones de dirección */
@@ -28,29 +29,35 @@ body {
     background: #393e46;
     border: none;
     color: white;
-    font-size: 24px;
+    font-size: 22px;
     font-weight: bold;
-    border-radius: 10px;
-    box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+    border-radius: 12px;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.4);
 }
-.dbtn:active { background: #00adb5; } /* Se ilumina en azul al tocarlo */
+.dbtn:active { 
+    background: #00adb5; 
+} 
 
-/* Posicionamiento en la rejilla 3x3 */
+/* Posicionamiento de las flechas en la rejilla */
 .btn-up    { grid-column: 2; grid-row: 1; }
 .btn-left  { grid-column: 1; grid-row: 2; }
 .btn-right { grid-column: 3; grid-row: 2; }
 .btn-down  { grid-column: 2; grid-row: 3; }
 
-/* El botón redondo de saltar que ya tenías */
+/* El botón redondo de SALTAR (Se mueve de forma natural a la derecha por el flex-direction: row) */
 .btn-play { 
-    width: 120px; 
-    height: 120px; 
+    width: 130px; 
+    height: 130px; 
     border-radius: 50%; 
     background: #00adb5; 
     color: white; 
     border: none; 
-    font-size: 18px; 
+    font-size: 20px; 
     font-weight: bold; 
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3); 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4); 
+    cursor: pointer;
 }
-.btn-play:active { background: #222831; transform: scale(0.95); }
+.btn-play:active { 
+    background: #222831; 
+    transform: scale(0.95); 
+}
