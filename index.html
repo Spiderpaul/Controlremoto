@@ -19,26 +19,47 @@
     <button class="btn-play" id="botonPausa">PLAY / PAUSE</button>
 
     <script>
-        // 2. REGISTRO DEL SERVICE WORKER (Obligatorio para PWA)
+        // ==========================================
+        // 1. REGISTRO DEL SERVICE WORKER (Intacto)
+        // ==========================================
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js')
                 .then(() => console.log("Service Worker registrado con éxito."))
                 .catch(err => console.error("Error al registrar SW:", err));
         }
 
-        // Lógica del botón
+        // ==========================================
+        // 2. CONEXIÓN AL TÚNEL WEBSOCKET (Nuevo)
+        // ==========================================
+        // Nota que ahora cambiamos "http://" por "ws://" (WebSocket)
+        const URL_WEBSOCKET = 'ws://192.168.100.14:5005'; 
+        const socket = new WebSocket(URL_WEBSOCKET);
+
+        // Mensajes de diagnóstico en la consola del celular para saber si conectó
+        socket.onopen = () => console.log("¡Conectado exitosamente al servidor por WebSocket!");
+        socket.onerror = (error) => console.error("Error en el WebSocket:", error);
+        socket.onclose = () => console.log("Conexión WebSocket cerrada.");
+
+        // ==========================================
+        // 3. LÓGICA DEL BOTÓN (Actualizada)
+        // ==========================================
         const BOTON = document.getElementById('botonPausa');
-        const URL_SERVIDOR = 'http://192.168.100.14:5005/pausa'; 
 
         function enviarSeñal(e) {
-            e.preventDefault(); 
-            console.log("Enviando señal...");
+            e.preventDefault(); // Evita zooms y retrasos del navegador móvil
             
-            fetch(URL_SERVIDOR, { mode: 'no-cors' })
-                .then(() => console.log("¡Señal enviada!"))
-                .catch(err => console.error("Error:", err));
+            // Verificamos que el túnel de WebSocket esté abierto antes de mandar datos
+            if (socket.readyState === WebSocket.OPEN) {
+                console.log("Enviando ráfaga por WebSocket...");
+                
+                // Enviamos el comando exacto que espera tu servidor de Python: "A_PRESS"
+                socket.send("A_PRESS"); 
+            } else {
+                console.warn("No se pudo enviar, el WebSocket no está listo o está cerrado.");
+            }
         }
 
+        // Eventos para disparar la función
         BOTON.addEventListener('touchstart', enviarSeñal);
         BOTON.addEventListener('click', enviarSeñal);
     </script>
