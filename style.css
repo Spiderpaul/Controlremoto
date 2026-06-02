@@ -2,12 +2,12 @@
 body {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     height: 100vh;
     background: #121212;
     margin: 0;
-    
+     
     /* BLOQUEOS VITALES PARA JUEGOS MÓVILES */
     user-select: none;           /* Evita que se seleccione texto al presionar rápido */
     -webkit-user-select: none;
