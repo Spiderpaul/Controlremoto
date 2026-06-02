@@ -118,33 +118,47 @@
         });
 
         // ==========================================
-        // 5. SISTEMA DE TECLADO INTELIGENTE (Nuevo)
+        // 5. SISTEMA DE TECLADO INTELIGENTE (Versión Espejo)
         // ==========================================
+        let textoAnterior = "";
+
         inputTeclado.addEventListener('input', (e) => {
-            const texto = inputTeclado.value;
-            
-            // Si el usuario presiona espacio o enter en Gboard, enviamos la palabra
-            if (texto.endsWith(' ') || e.inputType === 'insertLineBreak') {
-                if (texto.trim() !== "") {
-                    enviarComando(`TEXTO:${texto}`);
+            const textoActual = inputTeclado.value;
+
+            // Caso 1: El usuario escribió algo nuevo (añadió texto)
+            if (textoActual.length > textoAnterior.length) {
+                // Conseguimos exactamente lo último que se escribió (puede ser una letra, un signo o un emoji)
+                const caracteresNuevos = textoActual.slice(textoAnterior.length);
+                
+                // Si es un salto de línea (Enter en Gboard), mandamos un Enter a la PC
+                if (e.inputType === 'insertLineBreak' || caracteresNuevos === '\n') {
+                    enviarComando("TECLA:ENTER");
+                    inputTeclado.value = ""; // Limpiamos solo al dar Enter completo
+                    textoAnterior = "";
+                    return;
                 }
-                inputTeclado.value = ''; // Limpieza automática del input
+
+                // Enviamos el carácter o caracteres exactos a la PC de inmediato
+                enviarComando(`TEXTO:${caracteresNuevos}`);
+            } 
+            // Caso 2: El usuario borró algo
+            else if (textoActual.length < textoAnterior.length) {
+                const diferencia = textoAnterior.length - textoActual.length;
+                // Mandamos tantos borrados como caracteres se hayan eliminado de golpe
+                for (let i = 0; i < diferencia; i++) {
+                    enviarComando("TECLA:BACKSPACE");
+                }
             }
+
+            // Actualizamos el estado del espejo
+            textoAnterior = inputTeclado.value;
         });
 
-        // Detectar si el usuario borra texto en un cuadro vacío
-        inputTeclado.addEventListener('keydown', (e) => {
-            if (e.key === 'Backspace' && inputTeclado.value === '') {
-                enviarComando('TECLA:BACKSPACE');
-            }
+        // Botón de seguridad: Si el cuadro se llena mucho, un doble clic en el trackpad lo limpia
+        trackpad.addEventListener('dblclick', () => {
+            inputTeclado.value = "";
+            textoAnterior = "";
         });
-
-        function enviarComando(mensaje) {
-            if (socket.readyState === WebSocket.OPEN) {
-                console.log("Enviando:", mensaje);
-                socket.send(mensaje);
-            }
-        }
     </script>
 </body>
 </html>
