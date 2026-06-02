@@ -9,18 +9,32 @@
     <meta name="theme-color" content="#00adb5">
 
     <link rel="stylesheet" href="style.css">
-
 </head>
 <body ontouchstart="">
 
-    <div class="dpad-container">
-        <button class="dbtn btn-up" id="btnIzquierda">▲</button> 
-        <button class="dbtn btn-left" id="btnAbajo">◀</button>  
-        <button class="dbtn btn-right" id="btnArriba">▶</button> 
-        <button class="dbtn btn-down" id="btnDerecha">▼</button> 
+    <div class="tabs-container">
+        <button class="tab-btn active" id="tabGamepad">🎮 Mando</button>
+        <button class="tab-btn" id="tabTeclado">⌨️ Teclado</button>
     </div>
 
-    <button class="btn-play" id="botonA">A</button>
+    <div id="vistaGamepad" class="vista-seccion">
+        <div class="dpad-container">
+            <button class="dbtn btn-up" id="btnIzquierda">▲</button> 
+            <button class="dbtn btn-left" id="btnAbajo">◀</button>  
+            <button class="dbtn btn-right" id="btnArriba">▶</button> 
+            <button class="dbtn btn-down" id="btnDerecha">▼</button> 
+        </div>
+
+        <button class="btn-play" id="botonA">A</button>
+    </div>
+
+    <div id="vistaTeclado" class="vista-seccion oculto">
+        <input type="text" id="inputTeclado" autocomplete="off" autocapitalize="none" placeholder="Toca abajo para escribir...">
+        
+        <div id="trackpad" class="area-trackpad">
+            <span>ÁREA DE ESCRITURA<br><br>⌨️ Toca aquí para abrir teclado ⌨️</span>
+        </div>
+    </div>
 
     <script>
         // ==========================================
@@ -33,49 +47,95 @@
         }
 
         // ==========================================
-        // 2. CONEXIÓN AL TÚNEL WEBSOCKET (Nuevo)
+        // 2. CONEXIÓN AL TÚNEL WEBSOCKET (Intacto)
         // ==========================================
-        // Nota que ahora cambiamos "http://" por "ws://" (WebSocket)
         const URL_WEBSOCKET = 'ws://192.168.100.14:80'; 
         const socket = new WebSocket(URL_WEBSOCKET);
 
-        // Mensajes de diagnóstico en la consola del celular para saber si conectó
         socket.onopen = () => console.log("¡Conectado exitosamente al servidor por WebSocket!");
         socket.onerror = (error) => console.error("Error en el WebSocket:", error);
         socket.onclose = () => console.log("Conexión WebSocket cerrada.");
 
         // ==========================================
-        // Mapeamos los botones de la pantalla
+        // 3. MAPEO Y EVENTOS DE TU MANDO (Intacto)
         // ==========================================
         const botones = {
             'btnArriba': 'UP',
             'btnAbajo': 'DOWN',
             'btnIzquierda': 'LEFT',
             'btnDerecha': 'RIGHT',
-            'botonA': 'A' // Tu botón redondo
+            'botonA': 'A' 
         };
 
-        // Función mágica para registrar los eventos de presionar y soltar
         Object.keys(botones).forEach(id => {
             const el = document.getElementById(id);
             const comando = botones[id];
 
             if (el) {
-                // Al tocar la pantalla (Presionar botón)
                 el.addEventListener('touchstart', (e) => {
                     e.preventDefault();
                     enviarComando(`${comando}_DOWN`);
                 });
 
-                // Al levantar el dedo (Soltar botón)
                 el.addEventListener('touchend', (e) => {
                     e.preventDefault();
                     enviarComando(`${comando}_UP`);
                 });
 
-                // Soporte para pruebas en PC con el mouse (opcional)
                 el.addEventListener('mousedown', () => enviarComando(`${comando}_DOWN`));
                 el.addEventListener('mouseup', () => enviarComando(`${comando}_UP`));
+            }
+        });
+
+        // ==========================================
+        // 4. LÓGICA DE INTERCAMBIO DE PESTAÑAS (Nuevo)
+        // ==========================================
+        const tabGamepad = document.getElementById('tabGamepad');
+        const tabTeclado = document.getElementById('tabTeclado');
+        const vistaGamepad = document.getElementById('vistaGamepad');
+        const vistaTeclado = document.getElementById('vistaTeclado');
+        const inputTeclado = document.getElementById('inputTeclado');
+        const trackpad = document.getElementById('trackpad');
+
+        tabGamepad.addEventListener('click', () => {
+            tabGamepad.classList.add('active');
+            tabTeclado.classList.remove('active');
+            vistaGamepad.classList.remove('oculto');
+            vistaTeclado.classList.add('oculto');
+            inputTeclado.blur(); // Oculta el teclado si se cambia de pestaña
+        });
+
+        tabTeclado.addEventListener('click', () => {
+            tabTeclado.classList.add('active');
+            tabGamepad.classList.remove('active');
+            vistaTeclado.classList.remove('oculto');
+            vistaGamepad.classList.add('oculto');
+        });
+
+        // Al hacer clic en el área oscura, forzamos el foco en el input para abrir Gboard
+        trackpad.addEventListener('click', () => {
+            inputTeclado.focus();
+        });
+
+        // ==========================================
+        // 5. SISTEMA DE TECLADO INTELIGENTE (Nuevo)
+        // ==========================================
+        inputTeclado.addEventListener('input', (e) => {
+            const texto = inputTeclado.value;
+            
+            // Si el usuario presiona espacio o enter en Gboard, enviamos la palabra
+            if (texto.endsWith(' ') || e.inputType === 'insertLineBreak') {
+                if (texto.trim() !== "") {
+                    enviarComando(`TEXTO:${texto}`);
+                }
+                inputTeclado.value = ''; // Limpieza automática del input
+            }
+        });
+
+        // Detectar si el usuario borra texto en un cuadro vacío
+        inputTeclado.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && inputTeclado.value === '') {
+                enviarComando('TECLA:BACKSPACE');
             }
         });
 

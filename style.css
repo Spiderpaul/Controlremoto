@@ -6,7 +6,7 @@ body {
     align-items: center;
     height: 100vh;
     background: #121212;
-    margin: 0;
+    margin: 40px;
      
     /* BLOQUEOS VITALES PARA JUEGOS MÓVILES */
     user-select: none;           /* Evita que se seleccione texto al presionar rápido */
@@ -54,3 +54,81 @@ body {
     box-shadow: 0 10px 20px rgba(0,0,0,0.3); 
 }
 .btn-play:active { background: #222831; transform: scale(0.95); }
+
+/* --- DISEÑO DE LAS PESTAÑAS SUPERIORES --- */
+.tabs-container {
+    display: flex;
+    width: 100%;
+    max-width: 400px;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px;
+    background: #222831;
+    border: 2px solid #393e46;
+    color: #888;
+    font-weight: bold;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.tab-btn.active {
+    background: #393e46;
+    border-color: #00adb5; /* Resalte en azul cian */
+    color: #fff;
+}
+
+/* --- CONTROL DE SECCIONES --- */
+.vista-seccion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    flex-grow: 1;
+}
+
+.oculto {
+    display: none !important; /* Oculta la sección inactiva */
+}
+
+/* --- ESTILO DEL CAMPO DE TEXTO Y TRACKPAD --- */
+#inputTeclado {
+    width: 85%;
+    max-width: 350px;
+    padding: 10px;
+    background: #222831;
+    border: 1px solid #393e46;
+    color: #fff;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.area-trackpad {
+    width: 90%;
+    max-width: 400px;
+    height: 220px;
+    background: #1e1e1e;
+    border: 2px dashed #393e46;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #666;
+    font-weight: bold;
+    text-align: center;
+    font-size: 14px;
+}
+
+.area-trackpad:active {
+    border-color: #00adb5;
+    background: #252525;
+}
